@@ -20,13 +20,13 @@ sys.setdefaultencoding('utf-8')
 
 class DB(object):
     def __init__(self):
-        # 初始化 数据库连接 对象
-        self.__connection = __import__("app.common.db_connect", fromlist=True)  # 反射 , fromlist=True
-        self.__connect = getattr(self.__connection, "DbConnect")()
-        self.__conn, self.__cur = self.__connect.get_conn()
+        """ 初始化 数据库连接 对象"""
+        self.__connection = __import__("app.common.db_connect", fromlist=True)  # 反射
+        self.__connect = getattr(self.__connection, "DbConnect")()  # 获取类
+        self.__conn, self.__cur = self.__connect.get_conn()  # 类方法
 
     def db_object(self):
-        ''' 数据库连接对象 '''
+        """ 数据库连接对象 """
         db_info = config.db_info
         try:
             conn = MySQLdb.connect(**db_info)
@@ -38,11 +38,8 @@ class DB(object):
         finally:
             pass
 
-    # 条件查询
     def db_select_on(self, query):
-        '''
-        数据库条件查询
-        '''
+        """ 单一查询，成功返回记录，失败None """
         try:
             # cur = self.db_object()[1]
             self.__cur.execute(query)
@@ -52,11 +49,8 @@ class DB(object):
             print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
             return None
 
-    # 模糊全部
     def db_select_all(self, query):
-        '''
-        数据库模糊查询
-        '''
+        """数据库模糊查询,成功返回数据，失败None"""
         # cur = self.db_object()[1]
         try:
             self.__cur.execute(query)
@@ -66,8 +60,8 @@ class DB(object):
             print ("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
             return None
 
-    # 单条插入，成功返回1，失败返回None
     def db_insert_on(self, query=None, args=None):
+        """单条插入，成功返回1，失败返回None"""
         # conn, cur = self.db_object()
         try:
             if args:
@@ -78,10 +72,11 @@ class DB(object):
                 self.__conn.commit()
             return result
         except MySQLdb.Error as e:
-            return "Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1])
+            print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
+            return None
 
-    # 多条插入，成功返回count，失败返回None
     def db_insert_many(self, query=None, args=None):
+        """多条插入，成功返回count，失败返回None"""
         # conn, cur = self.db_object()
         try:
             if args:
@@ -92,10 +87,11 @@ class DB(object):
                 self.__conn.commit()
             return result
         except MySQLdb.Error as e:
-            return "Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1])
+            print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
+            return None
 
-    # 更新，成功返回1，更新未改动返回0；
     def db_update_on(self, query=None, args=None):
+        """更新，成功返回1，更新未改动返回0"""
         # conn, cur = self.db_object()
         try:
             if args:
@@ -109,8 +105,8 @@ class DB(object):
             print('Mysql Error {arg0}:{arg1}'.format(arg0=e.args[0], arg1=e.args[1]))
             return None
 
-    # 删除，成功返回1，更新未改动返回0；
     def db_delete_on(self, query, args=None):
+        """删除，成功返回1，更新未改动返回0"""
         # conn, cur = self.db_object()
         try:
             if args:
@@ -125,6 +121,7 @@ class DB(object):
             return None
 
     def db_close(self):
+        """数据库关闭"""
         # conn, cur = self.db_object()
         self.__cur.close()
         self.__conn.close()
