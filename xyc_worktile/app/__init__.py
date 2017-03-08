@@ -4,7 +4,7 @@
 # @Descript:
 from flask import Flask
 # from flask.ext.bootstrap import Bootstrap
-from flask.ext.login import LoginManager
+from flask_login import LoginManager
 # from flask.ext.pagedown import PageDown
 
 from config import config

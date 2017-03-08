@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-{% if session['phone'] %}
+{% if session['mobile'] %}
 
 <head>
 
@@ -14,19 +14,19 @@
     <title>自动化运维</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="TypeError: argument of type 'function' is not iterable/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
-    <link href="/static/css/metisMenu.min.css" rel="stylesheet">
+    <link href="../static/css/metisMenu.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="/static/css/sb-admin-2.css" rel="stylesheet">
+    <link href="../static/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- Morris Charts CSS -->
-    <link href="/static/css/morris.css" rel="stylesheet">
+    <link href="../static/css/morris.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="/static/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     {% block css %}
     {% endblock %}
     <style type="text/css">
@@ -96,9 +96,9 @@
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="/user/info"><i class="fa fa-user fa-fw"></i> 审核用户</a>
+                        <li><a href="/auth/info"><i class="fa fa-user fa-fw"></i> 审核用户</a>
                         <li class="divider"></li>
-                        <li><a href="/user/logout"><i class="fa fa-sign-out fa-fw"></i> 注销</a>
+                        <li><a href="/auth/logout"><i class="fa fa-sign-out fa-fw"></i> 注销</a>
                         </li>
                     </ul>
                     <!-- 右侧用户按钮开始 -->
@@ -273,23 +273,23 @@
     <!-- 画布结束 -->
 
     <!-- jQuery -->
-    <script src="/static/js/jquery.min.js"></script>
+    <script src="../static/js/jquery.min.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/bootstrap.file-input.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <script src="../static/js/bootstrap.file-input.js"></script>
 
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script src="/static/js/metisMenu.min.js"></script>
+    <script src="../static/js/metisMenu.min.js"></script>
 
     <!-- Morris Charts JavaScript -->
-    <script src="/static/js/raphael.min.js"></script>
-    <script src="/static/js/morris.min.js"></script>
-    <script src="/static/js/morris-data.js"></script>
+    <script src="../static/js/raphael.min.js"></script>
+    <script src="../static/js/morris.min.js"></script>
+    <script src="../static/js/morris-data.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="/static/js/sb-admin-2.js"></script>
+    <script src="../static/js/sb-admin-2.js"></script>
     {% block js %}
     {% endblock %}
 

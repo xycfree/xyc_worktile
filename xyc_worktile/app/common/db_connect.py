@@ -34,6 +34,24 @@ class DbConnect(object):
         conn.close()
 
 
+class DbConnectCore(object):
+    def __init__(self):
+        self.db_info = config.db_info_core
+
+    def get_conn(self):
+        try:
+            self.conn = MySQLdb.connect(**self.db_info)
+            self.cur = self.conn.cursor()
+            return self.conn, self.cur
+        except Exception as e:
+            logger.error('{0},{1}'.format(e, traceback.format_exc()))
+            raise e
+
+    def db_close(self, conn, cur):
+        cur.close()
+        conn.close()
+
+
 if __name__ == '__main__':
     db = DbConnect()
     conn, cur = db.get_conn()

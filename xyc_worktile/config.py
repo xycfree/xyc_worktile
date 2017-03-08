@@ -20,7 +20,7 @@ class Config:
     _MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16M，允许最大上传文件
     SECRET_KEY = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
     # configuration mysql--- for prodict
-    SQLALCHEMY_DATABASE_URI = "mysql://%s:%s@%s/%s" % ('root', 'root', '127.0.0.1', 'aops')
+    SQLALCHEMY_DATABASE_URI = "mysql://%s:%s@%s/%s" % ('root', 'root', '127.0.0.1', 'work-passport')
 
     SSL_DISABLE = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
@@ -105,7 +105,15 @@ db_info = {
     'port': 3306,
     'user': 'root',
     'passwd': 'root',
-    'db': 'aops',
+    'db': 'pcode-passport',
+    'charset': 'utf8'
+}
+db_info_core = {
+    'host': "127.0.0.1",
+    'port': 3306,
+    'user': 'root',
+    'passwd': 'root',
+    'db': 'pcode-core',
     'charset': 'utf8'
 }
 '''

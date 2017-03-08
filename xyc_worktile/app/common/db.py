@@ -25,6 +25,9 @@ class DB(object):
         self.__connect = getattr(self.__connection, "DbConnect")()  # 获取类
         self.__conn, self.__cur = self.__connect.get_conn()  # 类方法
 
+        self.__connect_core = getattr(self.__connection, "DbConnectCore")()  # 获取类
+        self.__conn_core, self.__cur_core = self.__connect.get_conn()  # 类方法
+
     def db_object(self):
         """ 数据库连接对象 """
         db_info = config.db_info
@@ -43,22 +46,29 @@ class DB(object):
         try:
             # cur = self.db_object()[1]
             self.__cur.execute(query)
-            row = self.__cur.fetchone()
-            return row
-        except Exception as e:
+            result = self.__cur.fetchone()
+
+            if result:
+                return True
+            else:
+                return False
+        except MySQLdb.Error as e:
             print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
-            return None
+            raise e
 
     def db_select_all(self, query):
         """数据库模糊查询,成功返回数据，失败None"""
         # cur = self.db_object()[1]
         try:
             self.__cur.execute(query)
-            row = self.__cur.fetchall()
-            return row
-        except Exception as e:
-            print ("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
-            return None
+            result = self.__cur.fetchall()
+            if result:
+                return True
+            else:
+                return False
+        except MySQLdb.Error as e:
+            print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
+            raise e
 
     def db_insert_on(self, query=None, args=None):
         """单条插入，成功返回1，失败返回None"""
@@ -70,10 +80,33 @@ class DB(object):
             else:
                 result = self.__cur.execute(query)
                 self.__conn.commit()
-            return result
+            if result is not None:
+                return True
+            else:
+                self.__conn.rollback()
+                return False
         except MySQLdb.Error as e:
             print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
-            return None
+            raise e
+
+    def db_insert_on_no_commit(self, query=None, args=None):
+        """单条插入，成功返回1，失败返回None"""
+        # conn, cur = self.db_object()
+        try:
+            if args:
+                result = self.__cur.execute(query, args)
+                # self.__conn.commit()
+            else:
+                result = self.__cur.execute(query)
+                # self.__conn.commit()
+            if result is not None:
+                return True
+            else:
+                self.__conn.rollback()
+                return False
+        except MySQLdb.Error as e:
+            print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
+            raise e
 
     def db_insert_many(self, query=None, args=None):
         """多条插入，成功返回count，失败返回None"""
@@ -85,10 +118,16 @@ class DB(object):
             else:
                 result = self.__cur.executemany(query)
                 self.__conn.commit()
-            return result
+
+            if result is not None:
+                return True
+            else:
+                self.__conn.rollback()
+                return False
         except MySQLdb.Error as e:
+
             print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
-            return None
+            raise e
 
     def db_update_on(self, query=None, args=None):
         """更新，成功返回1，更新未改动返回0"""
@@ -100,10 +139,14 @@ class DB(object):
             else:
                 result = self.__cur.execute(query)
                 self.__conn.commit()
-            return result
+            if result:
+                return True
+            else:
+                self.__conn.rollback()
+                return False
         except MySQLdb.Error as e:
-            print('Mysql Error {arg0}:{arg1}'.format(arg0=e.args[0], arg1=e.args[1]))
-            return None
+            print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
+            raise e
 
     def db_delete_on(self, query, args=None):
         """删除，成功返回1，更新未改动返回0"""
@@ -115,22 +158,49 @@ class DB(object):
             else:
                 result = self.__cur.execute(query)
                 self.__conn.commit()
-            return result
+            if result:
+                return True
+            else:
+                self.__conn.rollback()
+                return False
+        except MySQLdb.Error as e:
+            print("Mysql Error {arg0}:{arg1}".format(arg0=e.args[0], arg1=e.args[1]))
+            raise e
+
+    def db_rollback(self):
+        try:
+            self.__conn.rollback()
+            print('Date is rollback success!')
+            return True
         except MySQLdb.Error as e:
             print('Mysql Error {arg0}:{arg1}'.format(arg0=e.args[0], arg1=e.args[1]))
-            return None
+            return False
+
+    def db_commit(self):
+        try:
+            self.__conn.commit()
+            print('Date is commit success!')
+            return True
+        except MySQLdb.Error as e:
+            print('Mysql Error {arg0}:{arg1}'.format(arg0=e.args[0], arg1=e.args[1]))
+            return False
 
     def db_close(self):
         """数据库关闭"""
         # conn, cur = self.db_object()
+        if not self.__conn is None:
+            self.__conn.commit()  # 提交事务
         self.__cur.close()
         self.__conn.close()
+
 
     @staticmethod
     def md5(strs):
         """MD5加密"""
         # import hashlib
-        m = hashlib.md5()  # 创建md5对象 m = hashlib.md5(strs)
+        m = hashlib.md5('96e79218965eb72c92a549dd5a330112')
+        # 创建md5对象 m = hashlib.md5(strs) 111111
+
         m.update(strs)  # 生成机密串
         pwd = m.hexdigest()  # 获取加密串
         return pwd
@@ -163,6 +233,14 @@ class DB(object):
         str_decode = base64.decodestring(strs)
         return str_decode
 
+
+class DBCore(DB):
+    def __init__(self):
+        super(DBCore, self).__init__()
+        """ 初始化 数据库连接 对象"""
+        self.__connection = __import__("app.common.db_connect", fromlist=True)  # 反射
+        self.__connect = getattr(self.__connection, "DbConnectCore")()  # 获取类
+        self.__conn, self.__cur = self.__connect.get_conn()  # 类方法
 
 if __name__ == '__main__':
     db = DB()
